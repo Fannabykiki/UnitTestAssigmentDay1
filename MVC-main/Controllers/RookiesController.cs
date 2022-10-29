@@ -36,7 +36,7 @@ namespace MVCAssigmentDay2.Controllers
                 ViewData["Index"] = index;
                 return View(model);
             }
-            return View();
+            return RedirectToAction("Index");
         }
 
         [HttpGet]

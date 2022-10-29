@@ -25,13 +25,48 @@ public class RookiesControllerTest
             FirstName = "Nam",
             LastName = "Phan",
             Gender = "Male",
-            DateOfBirth = new DateTime(2001,10,18)
+            DateOfBirth = new DateTime(2001, 10, 18)
         };
 
         var result = _rookiesController.Create(mockModel);
 
         Assert.IsInstanceOf<RedirectToActionResult>(result);
 
-        Assert.AreEqual((result as RedirectToActionResult).ActionName,"Index");
+        Assert.AreEqual((result as RedirectToActionResult).ActionName, "Index");
     }
+
+    [Test]
+    public void Details_ReturnsToAction_InValidIndex()
+    {
+        _personService.Setup(p => p.GetOne(It.IsAny<int>())).Returns(null as PersonModel);
+        var index = 0;
+
+        var result = _rookiesController.Detail(index);
+
+        Assert.IsInstanceOf<RedirectToActionResult>(result);
+        Assert.That("Index", Is.EqualTo((result as RedirectToActionResult).ActionName));
+    }
+
+    [Test]
+    public void Details_ReturnsToAction_ValidIndex()
+    {
+        var expectModel = new PersonModel
+        {
+            FirstName = "Nam",
+            LastName = "Phan"
+        };
+        _personService.Setup(p => p.GetOne(It.IsAny<int>())).Returns(expectModel);
+        var index = 0;
+
+        var result = _rookiesController.Detail(index) as ViewResult;
+
+        Assert.IsNotNull(result);
+
+        var returnModel = result.Model as PersonModel;
+
+        Assert.AreEqual(expectModel.FirstName, returnModel.FirstName);
+
+        Assert.AreEqual(expectModel.LastName, returnModel.LastName);
+    }
+
 }
